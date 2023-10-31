@@ -8,6 +8,13 @@ def eq10_09(F_A, V, gamma_TM):
     :param V: The value for V, another parameter in the equation
     :param gamma_TM: The value for gamma_TM, another parameter in the equation
     :return: The calculated value of k_FV
+
+    # Example usage:
+    F_A_value = 2
+    V_value = 3
+    gamma_TM_value = 4
+    result = eq10_09(F_A_value, V_value, gamma_TM_value)
+    print("Result of eq10-09:", result)  # Expected output: 162
     """
     # Ensure that the input values are either numbers or SymPy expressions
     F_A = sp.sympify(F_A)
@@ -19,9 +26,4 @@ def eq10_09(F_A, V, gamma_TM):
     
     return k_FV
 
-# Example usage:
-#F_A_value = 2
-#V_value = 3
-#gamma_TM_value = 4
-#result = eq10_09(F_A_value, V_value, gamma_TM_value)
-#print("Result of eq10-09:", result)  # Expected output: 162
+
