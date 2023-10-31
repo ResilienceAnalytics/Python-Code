@@ -24,7 +24,9 @@ def eq10_07(phi_F_A, phi_V):
     return gamma_TM
 
 # Example usage:
-phi_F_A_value = 10
-phi_V_value = 5
-result = eq10_07(phi_F_A_value, phi_V_value)
-print("Result of eq10-07:", result)  # Expected output: 2.0
+
+#phi_F_A_value = 10
+#phi_V_value = 5
+#result = eq10_07(phi_F_A_value, phi_V_value)
+#print("Result of eq10-07:", result)  
+# Expected output: 2.0
