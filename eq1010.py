@@ -8,6 +8,13 @@ def eq10_10(U_P, V, gamma_TM):
     :param V: The value for V, another parameter in the equation
     :param gamma_TM: The value for gamma_TM, another parameter in the equation
     :return: The calculated value of k_UV
+
+    # Example usage:
+    U_P_value = 2
+    V_value = 3
+    gamma_TM_value = 4
+    result = eq10_10(U_P_value, V_value, gamma_TM_value)
+    print("Result of eq10-10:", result)  # Expected output: 54
     """
     # Ensure that the input values are either numbers or SymPy expressions
     U_P = sp.sympify(U_P)
@@ -19,9 +26,4 @@ def eq10_10(U_P, V, gamma_TM):
     
     return k_UV
 
-# Example usage:
-U_P_value = 2
-V_value = 3
-gamma_TM_value = 4
-result = eq10_10(U_P_value, V_value, gamma_TM_value)
-print("Result of eq10-10:", result)  # Expected output: 54
+
