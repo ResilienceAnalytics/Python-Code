@@ -1,14 +1,6 @@
 # Importing SymPy for symbolic mathematics
 import sympy as sp
 
-# Defining the symbol F_P and the functions M(F_P) and L(F_P)
-F_P = sp.symbols('F_P')
-M = sp.Function('M')(F_P)
-L = sp.Function('L')(F_P)
-
-# Calculating the partial derivatives of M and L with respect to F_P
-dM_dFP = sp.diff(M, F_P)
-dL_dFP = sp.diff(L, F_P)
 
 # Defining a function to evaluate the derivatives for a specific value of F_P
 def eq09_17(F_P_value):
@@ -19,6 +11,15 @@ def eq09_17(F_P_value):
     
     :param F_P_value: The value of F_P for which the derivatives will be evaluated.
     :return: A tuple containing the evaluated derivatives of M and L with respect to F_P.
+
+    # Defining the symbol F_P and the functions M(F_P) and L(F_P)
+    F_P = sp.symbols('F_P')
+    M = sp.Function('M')(F_P)
+    L = sp.Function('L')(F_P)
+
+    # Calculating the partial derivatives of M and L with respect to F_P
+    dM_dFP = sp.diff(M, F_P)
+    dL_dFP = sp.diff(L, F_P)
     """
     # Substituting the value of F_P and evaluating the derivatives
     return dM_dFP.subs(F_P, F_P_value), dL_dFP.subs(F_P, F_P_value)
