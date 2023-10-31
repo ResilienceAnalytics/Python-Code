@@ -10,6 +10,21 @@ def eq10_15(U_A, F_P, M, L, N):
     :param L: Expression representing the function L(U_A, F_P)
     :param N: The constant N in the equation
     :return: A tuple containing the calculated values of phi_{F_P} from M and L
+
+    # Define the symbols
+    U_A = sp.symbols('U_A')
+    F_P = sp.symbols('F_P')  # Other variables that M and L might depend on
+    N = sp.symbols('N')
+
+    # Define the functions M and L as examples (replace with actual functions)
+    M = U_A**2 + F_P*U_A + 1
+    L = U_A**3 - F_P*U_A**2 + 2
+
+    # Example usage
+    N_value = 4  # Replace with the actual value
+    phi_F_P_M, phi_F_P_L = eq10_15(U_A, F_P, M, L, N_value)
+    print("phi_{F_P} from M:", phi_F_P_M)
+    print("phi_{F_P} from L:", phi_F_P_L)
     """
     # Calculate the partial derivatives
     partial_M_U_A = sp.diff(M, U_A)
@@ -21,17 +36,4 @@ def eq10_15(U_A, F_P, M, L, N):
     
     return phi_F_P_M, phi_F_P_L
 
-# Define the symbols
-U_A = sp.symbols('U_A')
-F_P = sp.symbols('F_P')  # Other variables that M and L might depend on
-N = sp.symbols('N')
 
-# Define the functions M and L as examples (replace with actual functions)
-M = U_A**2 + F_P*U_A + 1
-L = U_A**3 - F_P*U_A**2 + 2
-
-# Example usage
-N_value = 4  # Replace with the actual value
-phi_F_P_M, phi_F_P_L = eq10_15(U_A, F_P, M, L, N_value)
-print("phi_{F_P} from M:", phi_F_P_M)
-print("phi_{F_P} from L:", phi_F_P_L)
