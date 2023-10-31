@@ -20,8 +20,8 @@ def eq10_09(F_A, V, gamma_TM):
     return k_FV
 
 # Example usage:
-F_A_value = 2
-V_value = 3
-gamma_TM_value = 4
-result = eq10_09(F_A_value, V_value, gamma_TM_value)
-print("Result of eq10-09:", result)  # Expected output: 162
+#F_A_value = 2
+#V_value = 3
+#gamma_TM_value = 4
+#result = eq10_09(F_A_value, V_value, gamma_TM_value)
+#print("Result of eq10-09:", result)  # Expected output: 162
