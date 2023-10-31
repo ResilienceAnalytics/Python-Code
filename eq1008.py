@@ -12,6 +12,7 @@ def eq10_08(gamma_TM):
     return gamma_TM < 1
 
 # Example usage:
-gamma_TM_value = 0.5
-result = eq10_08(gamma_TM_value)
-print("Is gamma_TM < 1?", result)  # Expected output: True
+#gamma_TM_value = 0.5
+#result = eq10_08(gamma_TM_value)
+#print("Is gamma_TM < 1?", result)  
+# Expected output: True
