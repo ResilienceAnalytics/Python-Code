@@ -9,6 +9,16 @@ def eq10_17(x, F_P, B, U_A):
     :param B: Expression or function B(x)
     :param U_A: Expression or function U_A(x)
     :return: Boolean value indicating if the equation holds
+
+    # Define the symbols and functions
+    x = sp.symbols('x')
+    F_P = sp.Function('F_P')(x)
+    B = sp.Function('B')(x)
+    U_A = sp.Function('U_A')(x)
+
+    # Example usage (replace F_P, B, and U_A with the actual functions)
+    result = eq10_17(x, F_P, B, U_A)
+    print("Does the equation hold?", result)
     """
     # Calculate the partial derivatives
     partial_F_P = sp.diff(F_P, x)
@@ -22,12 +32,4 @@ def eq10_17(x, F_P, B, U_A):
     # Check if the equation holds
     return sp.simplify(lhs - rhs) == 0
 
-# Define the symbols and functions
-x = sp.symbols('x')
-F_P = sp.Function('F_P')(x)
-B = sp.Function('B')(x)
-U_A = sp.Function('U_A')(x)
 
-# Example usage (replace F_P, B, and U_A with the actual functions)
-result = eq10_17(x, F_P, B, U_A)
-print("Does the equation hold?", result)
