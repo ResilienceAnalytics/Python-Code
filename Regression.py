@@ -13,7 +13,7 @@ def main(file_path, variables, nan_strategy, start_date, end_date):
     Parameters:
     - file_path: str, path to the input ODS file.
     - variables: str, independent and dependent variables separated by a pipe '|'.
-    - nan_strategy: str, strategy for handling NaN values ('mean' or 'median').
+    - nan_strategy: str, strategy for handling NaN values ('mean', 'median', or 'drop').
     - start_date: str, start date for filtering data in YYYY-MM-DD format.
     - end_date: str, end date for filtering data in YYYY-MM-DD format.
     """
@@ -26,8 +26,8 @@ def main(file_path, variables, nan_strategy, start_date, end_date):
     dependent_var = dependent_var.strip()  # Dependent variable
 
     # Validate NaN strategy
-    if nan_strategy not in ['mean', 'median']:
-        print("Error: The strategy for handling NaNs must be 'mean' or 'median'.")
+    if nan_strategy not in ['mean', 'median', 'drop']:
+        print("Error: The strategy for handling NaNs must be 'mean', 'median', or 'drop'.")
         sys.exit(1)
 
     # Load the data from an ODS file
@@ -37,10 +37,13 @@ def main(file_path, variables, nan_strategy, start_date, end_date):
     data['DATE'] = pd.to_datetime(data['DATE'])
     data = data[(data['DATE'] >= pd.to_datetime(start_date)) & (data['DATE'] <= pd.to_datetime(end_date))]
 
-    # Handle NaN values
-    imputer = SimpleImputer(missing_values=np.nan, strategy=nan_strategy)
-    data[independent_vars] = imputer.fit_transform(data[independent_vars])
-    data[[dependent_var]] = imputer.fit_transform(data[[dependent_var]])
+    # Handle NaN values based on the specified strategy
+    if nan_strategy == 'drop':
+        data.dropna(subset=independent_vars + [dependent_var], inplace=True)
+    else:
+        imputer = SimpleImputer(missing_values=np.nan, strategy=nan_strategy)
+        data[independent_vars] = imputer.fit_transform(data[independent_vars])
+        data[[dependent_var]] = imputer.fit_transform(data[[dependent_var]])
 
     # Select variables for regression
     X = data[independent_vars]  # Independent variables
