@@ -3,7 +3,6 @@ import numpy as np
 import os
 from sklearn.impute import SimpleImputer
 
-# Function to load data based on file extension
 def load_data(file_path):
     _, file_extension = os.path.splitext(file_path)
     if file_extension == '.csv':
@@ -15,87 +14,78 @@ def load_data(file_path):
     else:
         raise ValueError("Unsupported file format")
 
-# Function to handle missing values
-def handle_missing_values(data, method='delete', output_files=None):
-    # Replace non-numeric placeholders with NaN
-    for col in data.select_dtypes(include=['object']).columns:
-        data[col] = pd.to_numeric(data[col], errors='coerce')
+def impute_data(data, strategy):
+    # Conversion des colonnes 'object' en 'category' et remplacement des marqueurs spéciaux
+    for col in data.columns:
+        if data[col].dtype == 'object':
+            data[col].replace({'.': np.nan}, inplace=True)
+            data[col] = data[col].astype('category')
 
-    # Exclude columns with datetime objects
-    non_datetime_data = data.select_dtypes(exclude=['datetime'])
+    # Séparation des types de données
+    numerical_data = data.select_dtypes(include=['float64', 'int64'])
+    categorical_data = data.select_dtypes(include=['category'])
+    datetime_data = data.select_dtypes(include=['datetime64[ns]'])
 
-    # Apply imputation on non-datetime data
-    if method == 'delete':
-        data_cleaned = non_datetime_data.dropna()
-    elif method in ['impute_mean', 'impute_median', 'impute_mode']:
-        strategy = {
-            'impute_mean': 'mean',
-            'impute_median': 'median',
-            'impute_mode': 'most_frequent'
-        }[method]
+    # Imputation pour les données numériques
+    if not numerical_data.empty:
+        num_imputer = SimpleImputer(strategy=strategy)
+        numerical_data = pd.DataFrame(num_imputer.fit_transform(numerical_data), columns=numerical_data.columns)
 
-        imputer = SimpleImputer(strategy=strategy)
-        non_datetime_data_cleaned = pd.DataFrame(imputer.fit_transform(non_datetime_data), columns=non_datetime_data.columns)
+    # Imputation pour les données catégorielles
+    if not categorical_data.empty:
+        cat_imputer = SimpleImputer(strategy='most_frequent')
+        categorical_data = pd.DataFrame(cat_imputer.fit_transform(categorical_data), columns=categorical_data.columns)
 
-        # Combine the imputed non-datetime data with the datetime data
-        datetime_data = data.select_dtypes(include=['datetime'])
-        data_cleaned = pd.concat([datetime_data.reset_index(drop=True), non_datetime_data_cleaned.reset_index(drop=True)], axis=1)
-    else:
-        raise ValueError("Unsupported missing value handling method")
+    return pd.concat([datetime_data, numerical_data, categorical_data], axis=1)
 
-    # Save data if output_files are provided
-    if output_files:
-        for file_name, df in output_files.items():
-            # Replace non-numeric placeholders with NaN for each output file
-            for col in df.select_dtypes(include=['object']).columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce')
-
-            # Combine the imputed non-datetime data with the datetime data for each file
-            datetime_data = data.select_dtypes(include=['datetime'])
-            non_datetime_data_cleaned = df.select_dtypes(exclude=['datetime'])
-            combined_data = pd.concat([datetime_data.reset_index(drop=True), non_datetime_data_cleaned.reset_index(drop=True)], axis=1)
-            combined_data.to_csv(file_name, index=False)
-
-    return data_cleaned
-
-# Main script
+# Entrée de l'utilisateur
 file_path = input("Enter the path to the data file (CSV, XLSX, ODS): ")
 data = load_data(file_path)
 
-print("Choose how to handle missing values:")
-print("1. Delete rows with missing values")
-print("2. Impute missing values with mean")
-print("3. Impute missing values with median")
-print("4. Impute missing values with mode")
-print("5. Hybrid method with multiple output files")
+# Choix de l'imputation
+print("Choose the imputation method for numerical data:")
+print("1. Mean")
+print("2. Median")
+print("3. Hybrid (Mean and Median)")
+imputation_choice = input("Enter your choice (1-3): ")
+imputation_strategies = ['mean', 'median', 'hybrid']
 
-choice = input("Enter your choice (1-5): ")
-methods = ['delete', 'impute_mean', 'impute_median', 'impute_mode']
-
-if choice in ['1', '2', '3', '4']:
-    method = methods[int(choice) - 1]
-    data_cleaned = handle_missing_values(data, method=method)
-    save = input("Do you want to save the cleaned data? (yes/no): ")
-    if save.lower() == 'yes':
-        output_dir = input("Enter the output directory path: ")
-        os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
-        output_file = f"cleaned_data_{method}.csv"
-        output_path = os.path.join(output_dir, output_file)
-        data_cleaned.to_csv(output_path, index=False)
-        print(f"Data saved to {output_path}")
-    else:
-        print(data_cleaned)
-elif choice == '5':
-    output_dir = input("Enter the output directory path: ")
-    os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
-    output_files = {}
-    for method in methods:
-        file_name = f"{method}.csv"
-        output_files[file_name] = handle_missing_values(data, method=method)
-    data_cleaned = handle_missing_values(data, method='delete', output_files=output_files)
-    for file_name, df in output_files.items():
-        output_path = os.path.join(output_dir, file_name)
-        df.to_csv(output_path, index=False)
-        print(f"{file_name} saved to {output_path}")
+if imputation_choice in ['1', '2']:
+    strategy = imputation_strategies[int(imputation_choice) - 1]
+    data_cleaned = impute_data(data, strategy=strategy)
+elif imputation_choice == '3':
+    # Imputation hybride
+    data_cleaned_mean = impute_data(data, strategy='mean')
+    data_cleaned_median = impute_data(data, strategy='median')
+    strategy = 'hybrid'  # Définition de la variable 'strategy' pour l'option hybride
 else:
     print("Invalid choice")
+    exit()
+
+# Sauvegarde des données nettoyées
+save = input("Do you want to save the cleaned data? (yes/[Enter] for no): ").lower()
+if save == '' or save == 'yes':
+    _, file_name = os.path.split(file_path)
+    base_name, _ = os.path.splitext(file_name)
+    output_dir = base_name + "_" + strategy
+    os.makedirs(output_dir, exist_ok=True)
+
+    if strategy == 'hybrid':
+        data_cleaned_mean.to_csv(os.path.join(output_dir, base_name + "_mean.csv"), index=False)
+        data_cleaned_median.to_csv(os.path.join(output_dir, base_name + "_median.csv"), index=False)
+        print(f"Data saved to {output_dir} with mean and median imputations")
+    else:
+        output_file = base_name + f"_{strategy}.csv"
+        data_cleaned.to_csv(os.path.join(output_dir, output_file), index=False)
+        print(f"Data saved to {os.path.join(output_dir, output_file)}")
+elif save == 'no':
+    if strategy == 'hybrid':
+        print("Mean Imputation Data:")
+        print(data_cleaned_mean)
+        print("\nMedian Imputation Data:")
+        print(data_cleaned_median)
+    else:
+        print(data_cleaned)
+else:
+    print("Invalid input for save option.")
+    exit()
