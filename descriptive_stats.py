@@ -10,19 +10,14 @@ def descriptive_statistics(file_path, columns):
     - columns: list of str or 'all', columns to include in the analysis.
     """
     # Read the file
-    if file_path.endswith('.csv'):
-        data = pd.read_csv(file_path)
-    else:
-        data = pd.read_excel(file_path, engine='odf')
+    data = pd.read_csv(file_path) if file_path.endswith('.csv') else pd.read_excel(file_path)
 
     # Select columns for analysis
     if columns != 'all':
         data = data[columns]
 
     # Compute descriptive statistics
-    # Include datetime_is_numeric=True to treat datetime columns numerically
     desc_stats = data.describe(include='all', datetime_is_numeric=True)
-
     return desc_stats
 
 if __name__ == "__main__":
@@ -34,6 +29,12 @@ if __name__ == "__main__":
     if columns != 'all':
         columns = columns.split(',')
     stats = descriptive_statistics(file_path, columns)
+
+    # Adjust display settings to show all rows and columns
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
+    pd.set_option('display.max_colwidth', None)
     
-    # Print the statistics to the terminal (will be redirected to a file if command includes redirection)
     print(stats)
+
