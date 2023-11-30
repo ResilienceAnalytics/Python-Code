@@ -36,29 +36,29 @@ class DomainClassifier:
     """
     def __init__(self):
         self.dataset = {
-            # Terms for Creation-Natural Science sequence
-            "creation": "Natural Sciences", "manufacture": "Natural Sciences",
-            "elaboration": "Natural Sciences", "invention": "Natural Sciences",
-            "conception": "Natural Sciences", "genesis": "Natural Sciences",
-            "initiation": "Natural Sciences", "production": "Natural Sciences",
-            "fabrication": "Natural Sciences", "assemblage": "Natural Sciences",
-            "construction": "Natural Sciences", "development": "Natural Sciences",
-            "refinement": "Natural Sciences", "expansion": "Natural Sciences",
-            "amplification": "Natural Sciences",
+            # Terms for Sequence-CreationNaturalScience
+            "creation": "Sequence-CreationNaturalScience", "manufacture": "Sequence-CreationNaturalScience",
+            "elaboration": "Sequence-CreationNaturalScience", "invention": "Sequence-CreationNaturalScience",
+            "conception": "Sequence-CreationNaturalScience", "genesis": "Sequence-CreationNaturalScience",
+            "initiation": "Sequence-CreationNaturalScience", "production": "Sequence-CreationNaturalScience",
+            "fabrication": "Sequence-CreationNaturalScience", "assemblage": "Sequence-CreationNaturalScience",
+            "construction": "Sequence-CreationNaturalScience", "development": "Sequence-CreationNaturalScience",
+            "refinement": "Sequence-CreationNaturalScience", "expansion": "Sequence-CreationNaturalScience",
+            "amplification": "Sequence-CreationNaturalScience",
 
-            # Terms for Distribution-Human Science sequence
-            "distribution": "Human Sciences", "allocation": "Human Sciences",
-            "ventilation": "Human Sciences", "dissemination": "Human Sciences",
-            "dispersion": "Human Sciences", "apportionment": "Human Sciences",
-            "diffusion": "Human Sciences", "assignation": "Human Sciences",
-            "allotment": "Human Sciences", "rationing": "Human Sciences",
-            "designation": "Human Sciences", "circulation": "Human Sciences",
-            "broadcasting": "Human Sciences", "dispersal": "Human Sciences",
-            "propagation": "Human Sciences",
+            # Terms for Sequence-DistributionHumanScience
+            "distribution": "Sequence-DistributionHumanScience", "allocation": "Sequence-DistributionHumanScience",
+            "ventilation": "Sequence-DistributionHumanScience", "dissemination": "Sequence-DistributionHumanScience",
+            "dispersion": "Sequence-DistributionHumanScience", "apportionment": "Sequence-DistributionHumanScience",
+            "diffusion": "Sequence-DistributionHumanScience", "assignation": "Sequence-DistributionHumanScience",
+            "allotment": "Sequence-DistributionHumanScience", "rationing": "Sequence-DistributionHumanScience",
+            "designation": "Sequence-DistributionHumanScience", "circulation": "Sequence-DistributionHumanScience",
+            "broadcasting": "Sequence-DistributionHumanScience", "dispersal": "Sequence-DistributionHumanScience",
+            "propagation": "Sequence-DistributionHumanScience",
 
-            # Terms for Use-Natural Science sequence
-            "use": "Natural Sciences", "functioning": "Natural Sciences",
-            "usage": "Natural Sciences"
+            # Terms for Sequence-UseNaturalScience
+            "use": "Sequence-UseNaturalScience", "functioning": "Sequence-UseNaturalScience",
+            "usage": "Sequence-UseNaturalScience"
         }
 
     def classify_term(self, term):
