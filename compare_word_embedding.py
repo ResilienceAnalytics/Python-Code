@@ -1,3 +1,11 @@
+"""
+    Calculate the Semantic Shift Vector (SSV) and other key semantic shift metrics for a given word across two word embedding models.
+    This script computes the SSV, which represents the vector difference dn between the word's embedding in two models, highlighting semantic changes. 
+    Additionally, it calculates the element-wise product and sum of products of these embeddings, along with their Euclidean distance and cosine similarity. These metrics provide a comprehensive view of the word's semantic evolution across models.
+
+    author Mélik Lemariey
+"""
+
 import sys
 from gensim.models import KeyedVectors
 import numpy as np
