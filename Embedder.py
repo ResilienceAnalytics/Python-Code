@@ -13,7 +13,7 @@ import sys
 import torch
 import numpy as np
 
-# Initialisation des tokenizers
+# Tokenizers initialization 
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
