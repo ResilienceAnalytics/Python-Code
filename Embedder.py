@@ -6,14 +6,17 @@ from nltk.stem import PorterStemmer, WordNetLemmatizer
 from gensim.models import KeyedVectors
 from gensim.models import Word2Vec
 from transformers import BertTokenizer, BertModel, GPT2Tokenizer, GPT2Model 
+import pytesseract
 from PIL import Image
+from PIL import UnidentifiedImageError
 import io
 import re
 import sys
 import torch
 import numpy as np
+import json
 
-# Tokenizers initialization 
+# Initialisation des tokenizers
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -83,8 +86,13 @@ def apply_ocr_to_images(images):
     """
     ocr_results = []
     for img in images:
-        im = Image.open(io.BytesIO(img['stream']))
-        ocr_results.append(pytesseract.image_to_string(im))
+        try:
+            image_stream = io.BytesIO(img['stream'].get_data())  
+            im = Image.open(image_stream)
+            ocr_results.append(pytesseract.image_to_string(im))
+        except UnidentifiedImageError:
+            print(" non indentified image.")
+            continue  
     return ocr_results
 
 def tokenize_text(text, tokenization_method, remove_stopwords=False, use_stemming=False, use_lemmatization=False):
@@ -183,6 +191,17 @@ def generate_embeddings(tokenized_sentences, embedding_method):
     else:
         raise ValueError("Invalid embedding method. Choose 'word2vec', 'bert', 'gpt', or 'glove'.")
 
+def save_tokenized_data(tokenized_sentences, output_file):
+    """
+    Save tokenized sentences to a JSON file.
+
+    Args:
+        tokenized_sentences (list): List of tokenized sentences.
+        output_file (str): Path to the output file.
+    """
+    with open(output_file, 'w', encoding='utf-8') as file:
+        json.dump(tokenized_sentences, file, ensure_ascii=False, indent=4)
+
 def main():
     """
     Main function to extract text from a PDF, apply OCR, tokenize the text,
@@ -205,6 +224,12 @@ def main():
     print("OCR Results:", ocr_results[:3])  
     tokenized_sentences = tokenize_text(extracted_text, tokenization_method)  
     print("Tokenized Sentences:", tokenized_sentences[:3])  
+    
+    tokens_output_path = pdf_path.rsplit('.', 1)[0] + "_tokens.json"
+    save_tokenized_data(tokenized_sentences, tokens_output_path)
+    print("Tokenized sentences saved to", tokens_output_path)
+
+
     embeddings = generate_embeddings(tokenized_sentences, embedding_method)  
 
     if embeddings is not None:
