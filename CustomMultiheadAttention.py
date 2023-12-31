@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, losses
 
+#To be fixed with argpars
+
 class CustomMultiheadAttention(tf.keras.layers.Layer):
     """
     Custom class for multi-head attention in TensorFlow. This layer implements a multi-head attention mechanism
@@ -50,6 +52,116 @@ class CustomMultiheadAttention(tf.keras.layers.Layer):
         d_k = tf.cast(tf.shape(k)[-1], tf.float32)
         scaled_attention_logits = matmul_qk / tf.math.sqrt(d_k)
 
+        #Replace Attention calculation with the right calculation To be fixed with argpars
+#def cosine_similarity_attention(self, q, k, v, mask):
+#    """
+#    Calculate attention weights based on cosine similarity.
+#    
+#    Args:
+#        q (Tensor): Queries tensor.
+#        k (Tensor): Keys tensor.
+#        v (Tensor): Values tensor.
+#        mask (Tensor, optional): Mask tensor to exclude certain entries from attention.
+#
+#    Returns:
+#        Tensor: The resulting tensor after applying attention weights to the values.
+#   """
+#    # Normalize the query and key vectors
+#    q_normalized = tf.nn.l2_normalize(q, axis=-1)
+#    k_normalized = tf.nn.l2_normalize(k, axis=-1)
+#
+#    # Compute the cosine similarity
+#    matmul_qk = tf.matmul(q_normalized, k_normalized, transpose_b=True)
+#
+#    if mask is not None:
+#        matmul_qk += (mask * -1e9)
+#
+#    attention_weights = tf.nn.softmax(matmul_qk, axis=-1)
+#    output = tf.matmul(attention_weights, v)
+#    return output
+#
+#def l1_norm_attention(self, q, k, v, mask):
+#    """
+#    Calculate attention weights based on L1 norm (Manhattan distance).
+#    
+#    Args:
+#        q (Tensor): Queries tensor.
+#        k (Tensor): Keys tensor.
+#        v (Tensor): Values tensor.
+#        mask (Tensor, optional): Mask tensor to exclude certain entries from attention.
+#
+#    Returns:
+#        Tensor: The resulting tensor after applying attention weights to the values.
+#    """
+#    # Calculate the L1 distance
+#    q_expanded = tf.expand_dims(q, 2)
+#    k_expanded = tf.expand_dims(k, 1)
+#    l1_distance = tf.reduce_sum(tf.abs(q_expanded - k_expanded), axis=-1)
+#
+#    if mask is not None:
+#        l1_distance += (mask * 1e9)
+#
+#    attention_weights = tf.nn.softmax(-l1_distance, axis=-1)
+#    output = tf.matmul(attention_weights, v)
+#    return output
+#
+#def l2_norm_attention(self, q, k, v, mask):
+#    """
+#    Calculate attention weights based on L2 norm (Euclidean distance).
+#    
+#    Args:
+#        q (Tensor): Queries tensor.
+#        k (Tensor): Keys tensor.
+#        v (Tensor): Values tensor.
+#        mask (Tensor, optional): Mask tensor to exclude certain entries from attention.
+#
+#    Returns:
+#        Tensor: The resulting tensor after applying attention weights to the values.
+#    """
+#    # Calculate the L2 distance
+#    q_expanded = tf.expand_dims(q, 2)
+#    k_expanded = tf.expand_dims(k, 1)
+#    l2_distance = tf.sqrt(tf.reduce_sum(tf.square(q_expanded - k_expanded), axis=-1))
+#
+#    if mask is not None:
+#        l2_distance += (mask * 1e9)
+#
+#    attention_weights = tf.nn.softmax(-l2_distance, axis=-1)
+#    output = tf.matmul(attention_weights, v)
+#    return output
+#
+#def differential_attention(self, q, k, v, mask):
+#    """
+#    Calculate attention weights based on the differential method by considering the difference between
+#    old and new embeddings.
+#
+#    Args:
+#        q (Tensor): Queries tensor containing old and new embeddings.
+#        k (Tensor): Keys tensor containing old and new embeddings.
+#        v (Tensor): Values tensor.
+#        mask (Tensor, optional): Mask tensor to exclude certain entries from attention.
+#
+#    Returns:
+#        Tensor: The resulting tensor after applying attention weights to the values.
+#    """
+#    # Calculate the difference between old and new embeddings
+#    delta_k = k[:, :, 1:] - k[:, :, :-1]  # Assuming k contains embeddings in the order [old, new]
+#    delta_q = q[:, :, 1:] - q[:, :, :-1]  # Same for q
+#
+#    # Calculate the product of differences
+#    delta_product = delta_k * q[:, :, :-1] + delta_q * k[:, :, 1:]
+#
+#    # Calculate the sum of products for each dimension
+#    sum_product = tf.reduce_sum(delta_product, axis=-1, keepdims=True)
+#
+#    if mask is not None:
+#        sum_product += (mask * -1e9)
+#
+#    attention_weights = tf.nn.softmax(sum_product, axis=-1)
+#    output = tf.matmul(attention_weights, v)
+#    return output
+#
+#
         if mask is not None:
             scaled_attention_logits += (mask * -1e9)
 
