@@ -2,7 +2,6 @@ import os
 import re
 import string
 import argparse
-import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, losses
 from tensorflow.keras.callbacks import EarlyStopping
