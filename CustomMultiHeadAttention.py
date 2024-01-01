@@ -2,6 +2,7 @@ import os
 import re
 import string
 import argparse
+import datetime
 import tensorflow as tf
 from tensorflow.keras import layers, losses
 from tensorflow.keras.callbacks import EarlyStopping
@@ -242,5 +243,10 @@ if __name__ == "__main__":
     loss, accuracy = model.evaluate(test_ds)
     print(f"Loss: {loss}")
     print(f"Accuracy: {accuracy}")
+    current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+    # Save path with date and time
+    save_path = f'my_model_{current_time}'  # The path can be a directory
+    model.save(save_path)
 
    
