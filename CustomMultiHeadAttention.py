@@ -111,7 +111,7 @@ class CustomMultiheadAttention(tf.keras.layers.Layer):
         output = tf.matmul(attention_weights, v)
         return output
 
-    def differential_attention(self, q, k, v, mask):
+    def differentialSum_attention(self, q, k, v, mask):
         """
         Calculate attention weights based on the differential method by considering the difference between
         old and new embeddings.
@@ -139,6 +139,37 @@ class CustomMultiheadAttention(tf.keras.layers.Layer):
             sum_product += (mask * -1e9)
 
         attention_weights = tf.nn.softmax(sum_product, axis=-1)
+        output = tf.matmul(attention_weights, v)
+        return output
+
+    def differential_attention(self, q, k, v, mask):
+        """
+        Calculate attention weights based on the product of differences.
+
+        Args:
+            q (Tensor): Queries tensor containing old and new embeddings.
+            k (Tensor): Keys tensor containing old and new embeddings.
+            v (Tensor): Values tensor.
+            mask (Tensor, optional): Mask tensor to exclude certain entries from attention.
+
+        Returns:
+            Tensor: The resulting tensor after applying attention weights to the values.
+        """
+        # Calculate the difference between old and new embeddings
+        delta_k = k[:, :, 1:] - k[:, :, :-1]  # Assuming k contains embeddings in the order [old, new]
+        delta_q = q[:, :, 1:] - q[:, :, :-1]  # Same for q
+
+        # Calculate the product of differences
+        delta_product = delta_k * q[:, :, :-1] + delta_q * k[:, :, 1:]
+
+        # If a mask is provided, add a large negative value to masked positions
+        if mask is not None:
+            delta_product += (mask * -1e9)
+
+        # Apply softmax directly to the product of differences to obtain attention weights
+        attention_weights = tf.nn.softmax(delta_product, axis=-1)
+
+        # Apply attention weights to the values
         output = tf.matmul(attention_weights, v)
         return output
 
@@ -177,6 +208,8 @@ class CustomMultiheadAttention(tf.keras.layers.Layer):
             return self.l1_norm_attention(q, k, v, mask)
         elif self.attention_type == 'l2_norm':
             return self.l2_norm_attention(q, k, v, mask)
+        elif self.attention_type == 'differentialSum':
+            return self.differentialSum_attention(q, k, v, mask)
         elif self.attention_type == 'differential':
             return self.differential_attention(q, k, v, mask)
         return self.dot_product_attention(q, k, v, mask)
@@ -192,12 +225,12 @@ if __name__ == "__main__":
     # Parse command line arguments
     parser = argparse.ArgumentParser(description="Train a text classification model with custom multi-head attention.")
     parser.add_argument('--attention-type', type=str, default='scaled_dot_product',
-                        help="Type of attention mechanism ('scaled_dot_product', 'cosine_similarity', 'l1_norm', 'l2_norm', 'differential').")
+                        help="Type of attention mechanism ('scaled_dot_product', 'cosine_similarity', 'l1_norm', 'l2_norm', 'differentialSum', 'differential').")
     args = parser.parse_args()
     attention_type = args.attention_type
 
     # Dataset path configuration
-    dataset_dir = os.path.join(os.path.dirname('path/'))
+    dataset_dir = os.path.join(os.path.dirname('//path/to/'))
     train_dir = os.path.join(dataset_dir, 'train')
 
     early_stopping = EarlyStopping(
@@ -215,12 +248,12 @@ if __name__ == "__main__":
     max_features = 10000
     sequence_length = 250
     embedding_dim = 16
-    epochs = 20
+    epochs = 10
     callbacks=[early_stopping]
 
-    raw_train_ds = tf.keras.utils.text_dataset_from_directory('/path/train', batch_size=batch_size, validation_split=0.2, subset='training', seed=seed)
-    raw_val_ds = tf.keras.utils.text_dataset_from_directory('/path/train', batch_size=batch_size, validation_split=0.2, subset='validation', seed=seed)
-    raw_test_ds = tf.keras.utils.text_dataset_from_directory('/path/test', batch_size=batch_size)
+    raw_train_ds = tf.keras.utils.text_dataset_from_directory('/path/to/train', batch_size=batch_size, validation_split=0.2, subset='training', seed=seed)
+    raw_val_ds = tf.keras.utils.text_dataset_from_directory('/path/to/val', batch_size=batch_size, validation_split=0.2, subset='validation', seed=seed)
+    raw_test_ds = tf.keras.utils.text_dataset_from_directory('/path/to/test', batch_size=batch_size)
 
     vectorize_layer = layers.TextVectorization(standardize=custom_standardization, max_tokens=max_features, output_mode='int', output_sequence_length=sequence_length)
     vectorize_layer.adapt(raw_train_ds.map(lambda x, y: x))
@@ -243,10 +276,10 @@ if __name__ == "__main__":
     loss, accuracy = model.evaluate(test_ds)
     print(f"Loss: {loss}")
     print(f"Accuracy: {accuracy}")
+
     current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
     # Save path with date and time
     save_path = f'my_model_{current_time}'  # The path can be a directory
     model.save(save_path)
-
    
