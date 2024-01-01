@@ -7,6 +7,16 @@ import tensorflow as tf
 from tensorflow.keras import layers, losses
 from tensorflow.keras.callbacks import EarlyStopping
 
+"""
+| Attention Mechanism   | Validation Loss | Validation Accuracy | Test Loss | Test Accuracy |
+|-----------------------|-----------------|---------------------|-----------|---------------|
+| Differential          | 0.2904          | 0.8800              | 0.3087    | 0.8738        |
+| DifferentialSum       | 0.2902          | 0.8794              | 0.3087    | 0.8737        |
+| L2 Norm               | 0.2901          | 0.8794              | 0.3089    | 0.8734        |
+| L1 Norm               | 0.2904          | 0.8800              | 0.3089    | 0.8737        |
+| Cosine Similarity     | 0.2906          | 0.8798              | 0.3091    | 0.8730        |
+| Scaled Dot Product    | 0.2902          | 0.8796              | 0.3093    | 0.8728        |
+"""
 
 class CustomMultiheadAttention(tf.keras.layers.Layer):
     """
