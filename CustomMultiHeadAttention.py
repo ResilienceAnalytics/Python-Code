@@ -16,6 +16,9 @@ from tensorflow.keras.callbacks import EarlyStopping
 | L1 Norm               | 0.2904          | 0.8800              | 0.3089    | 0.8737        |
 | Cosine Similarity     | 0.2906          | 0.8798              | 0.3091    | 0.8730        |
 | Scaled Dot Product    | 0.2902          | 0.8796              | 0.3093    | 0.8728        |
+
+data:
+https://www.tensorflow.org/tutorials/keras/text_classification?hl=fr#download_and_explore_the_imdb_dataset
 """
 
 class CustomMultiheadAttention(tf.keras.layers.Layer):
