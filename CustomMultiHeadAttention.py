@@ -264,8 +264,8 @@ if __name__ == "__main__":
     epochs = 10
     callbacks=[early_stopping]
 
-    raw_train_ds = tf.keras.utils.text_dataset_from_directory('/path/to/train', batch_size=batch_size, validation_split=0.2, subset='training', seed=seed)
-    raw_val_ds = tf.keras.utils.text_dataset_from_directory('/path/to/val', batch_size=batch_size, validation_split=0.2, subset='validation', seed=seed)
+    raw_train_ds = tf.keras.utils.text_dataset_from_directory('/path/to/train', batch_size=batch_size, validation_split=0.5, subset='training', seed=seed)
+    raw_val_ds = tf.keras.utils.text_dataset_from_directory('/path/to/val', batch_size=batch_size, validation_split=0.5, subset='validation', seed=seed)
     raw_test_ds = tf.keras.utils.text_dataset_from_directory('/path/to/test', batch_size=batch_size)
 
     vectorize_layer = layers.TextVectorization(standardize=custom_standardization, max_tokens=max_features, output_mode='int', output_sequence_length=sequence_length)
