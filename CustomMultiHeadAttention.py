@@ -23,7 +23,7 @@ https://www.tensorflow.org/tutorials/keras/text_classification?hl=fr#download_an
 
 class CustomMultiheadAttention(tf.keras.layers.Layer):
     """
-    Custom class for multi-head attention in TensorFlow. This layer implements a multi-head attention mechanism
+    Custom  class for multi-head attention in TensorFlow. This layer implements a multi-head attention mechanism
     which allows the model to jointly attend to information from different representation subspaces.
 
     Args:
