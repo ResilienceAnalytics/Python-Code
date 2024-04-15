@@ -384,12 +384,16 @@ Returns:
 
 def setup_tensorboard():
     """
-Sets up and returns a TensorBoard callback for visualizing the training process.
+    Sets up and returns a TensorBoard callback for visualizing the training process.
 
-This function configures TensorBoard to log training metrics and embeddings, which can be viewed in the TensorBoard web interface.
+    This function configures TensorBoard to log training metrics and embeddings, which can be viewed in the TensorBoard web interface.
 
-Returns:
-    tensorflow.keras.callbacks.TensorBoard: Configured TensorBoard callback.
+    To view the TensorBoard:
+    - Run the command in a terminal: `tensorboard --logdir=logs/fit`
+    - Open your web browser and navigate to: http://localhost:6006/
+
+    Returns:
+        tensorflow.keras.callbacks.TensorBoard: Configured TensorBoard callback.
     """
     log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     return TensorBoard(log_dir=log_dir, histogram_freq=1)
