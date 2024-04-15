@@ -9,6 +9,15 @@ from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.callbacks import TensorBoard
 
 def parse_arguments():
+    """
+Parses command line arguments for training configuration.
+
+This function uses argparse to create command line options for configuring the training process. It includes options for batch size, number of training epochs, embedding dimensions, and more. 
+
+Returns:
+    argparse.Namespace: Parsed arguments with configurations like batch size, number of epochs, and model specifications.
+    """
+
     parser = argparse.ArgumentParser(description="Train a text classification model with flexible attention mechanisms.")
     # Model configuration
     parser.add_argument('--use-standard-attention', action='store_true',
@@ -66,14 +75,15 @@ def parse_arguments():
 
 class CustomMultiheadAttention(tf.keras.layers.Layer):
     """
-    Custom  class for multi-head attention in TensorFlow. This layer implements a multi-head attention mechanism
-    which allows the model to jointly attend to information from different representation subspaces.
+Custom implementation of a multi-head attention mechanism in TensorFlow.
 
-    Args:
-        embed_dim (int): Size of the embedding dimension.
-        num_heads (int): Number of attention heads.
-        dropout (float, optional): Dropout rate. Defaults to 0.0.
-        attention_type (str): Type of attention mechanism. Defaults to 'scaled_dot_product'.
+This class defines a multi-head attention layer that allows the model to attend to information from different representation subspaces at different positions. It supports multiple attention mechanisms like cosine similarity, L1 and L2 norm, and dot-product attention.
+
+Attributes:
+    embed_dim (int): Size of the embedding dimension.
+    num_heads (int): Number of attention heads.
+    dropout (float, optional): Dropout rate, defaults to 0.0.
+    attention_type (str): Type of attention mechanism, defaults to 'scaled_dot_product'.
     """
     def __init__(self, embed_dim, num_heads, attention_type='cosine_similarity', dropout=0.0):
         super(CustomMultiheadAttention, self).__init__()
@@ -272,6 +282,20 @@ def custom_standardization(input_data):
     return tf.strings.regex_replace(stripped_html, '[%s]' % re.escape(string.punctuation), '')
 
 def prepare_datasets(batch_size, seed, max_features, sequence_length):
+    """
+Prepares and returns training, validation, and testing datasets from the specified directory.
+
+This function reads text data from directories, applies text vectorization, and divides the data into training, validation, and test datasets using TensorFlow's data loading utilities.
+
+Args:
+    batch_size (int): Number of samples per batch.
+    seed (int): Seed for random operations, ensuring reproducibility.
+    max_features (int): Maximum number of words in the vocabulary.
+    sequence_length (int): The length to which each text sample is padded.
+
+Returns:
+    Tuple[tf.data.Dataset, tf.data.Dataset, tf.data.Dataset]: A tuple containing training, validation, and test datasets.
+    """
     # Chemin du dataset
     dataset_path = '/~/aclImdb/'
 
@@ -316,6 +340,17 @@ def prepare_datasets(batch_size, seed, max_features, sequence_length):
     return train_ds, val_ds, test_ds
 
 def build_model(attention_type, max_features, embedding_dim):
+    """
+Constructs and returns a TensorFlow Sequential model with an embedding layer, a custom multi-head attention layer, and a dense output layer.
+
+Args:
+    attention_type (str): Type of attention mechanism to use.
+    max_features (int): Maximum number of words in the vocabulary.
+    embedding_dim (int): Dimension of the embedding vectors.
+
+Returns:
+    tf.keras.Model: Constructed TensorFlow model ready for training.
+    """
     model = tf.keras.Sequential([
         layers.Embedding(max_features + 1, embedding_dim),
         CustomMultiheadAttention(embed_dim=args.embedding_dim, num_heads=args.num_heads, attention_type=attention_type),
@@ -326,6 +361,21 @@ def build_model(attention_type, max_features, embedding_dim):
     return model
 
 def train_and_evaluate(model, train_ds, val_ds, test_ds, callbacks):
+    """
+Compiles, trains, and evaluates the model using the provided datasets and callbacks.
+
+This function compiles the model with binary cross-entropy loss and an Adam optimizer, then trains it on the training dataset and evaluates it on the test dataset. Training progress is monitored using early stopping.
+
+Args:
+    model (tf.keras.Model): The model to train and evaluate.
+    train_ds (tf.data.Dataset): The training dataset.
+    val_ds (tf.data.Dataset): The validation dataset.
+    test_ds (tf.data.Dataset): The test dataset.
+    callbacks (List[tf.keras.callbacks.Callback]): List of callbacks to use during training.
+
+Returns:
+    tf.keras.Model: The trained model.
+    """
     model.compile(loss=losses.BinaryCrossentropy(from_logits=True), optimizer='adam', metrics=[tf.metrics.BinaryAccuracy()])
     model.fit(train_ds, validation_data=val_ds, epochs=args.epochs, callbacks=callbacks)
     loss, accuracy = model.evaluate(test_ds)
@@ -333,6 +383,14 @@ def train_and_evaluate(model, train_ds, val_ds, test_ds, callbacks):
     return model
 
 def setup_tensorboard():
+    """
+Sets up and returns a TensorBoard callback for visualizing the training process.
+
+This function configures TensorBoard to log training metrics and embeddings, which can be viewed in the TensorBoard web interface.
+
+Returns:
+    tensorflow.keras.callbacks.TensorBoard: Configured TensorBoard callback.
+    """
     log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     return TensorBoard(log_dir=log_dir, histogram_freq=1)
 
